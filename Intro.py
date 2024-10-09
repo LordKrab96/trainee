@@ -1,12 +1,10 @@
 import pandas as pd
-import json
-import os
 from datetime import datetime
 
-# 1. Считываем данные из файла
+#  Считываем данные из файла
 data = pd.read_csv('test_data.csv', sep=';')
 
-# 2. Заполняем пропущенные значения
+#  Заполняем пропущенные значения
 data.ffill(inplace=True)
 
 # 3. Добавляем минимум, максимум и средние значения
@@ -26,7 +24,7 @@ data['min_utilization'] = utilization_min
 data['max_utilization'] = utilization_max
 data['mean_utilization'] = utilization_mean
 
-# 4. Добавляем статус
+#  Добавляем статус
 def determine_status(row):
     if (row['temperature'] > temperature_mean + 0.3 * temperature_max) or \
        (row['utilization'] > utilization_mean + 0.3 * utilization_max):
@@ -35,14 +33,14 @@ def determine_status(row):
 
 data['status'] = data.apply(determine_status, axis=1)
 
-# 5. Сортируем данные по возрастанию timestamp
+#  Сортируем данные по возрастанию timestamp
 data.sort_values(by='timestamp', inplace=True)
 
 # Удаление ненужного столбца (если есть)
 if 'Unnamed: 0' in data.columns:
     data.drop(columns=['Unnamed: 0'], inplace=True)
 
-# 6. Сохраняем данные в файлы
+#  Сохраняем данные в файлы
 timestamp_now = datetime.now().strftime("%d%m%Y_%H%M%S")
 json_filename = f'{timestamp_now}.json'
 csv_filename = f'{timestamp_now}.csv'
